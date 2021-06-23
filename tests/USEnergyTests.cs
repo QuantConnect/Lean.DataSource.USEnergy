@@ -27,7 +27,7 @@ using QuantConnect.DataSource;
 namespace QuantConnect.DataLibrary.Tests
 {
     [TestFixture]
-    public class MyCustomDataTypeTests
+    public class USEnergyTests
     {
         [Test]
         public void JsonRoundTrip()
@@ -87,12 +87,13 @@ namespace QuantConnect.DataLibrary.Tests
 
         private BaseData CreateNewInstance()
         {
-            return new MyCustomDataType
+            return new USEnergy
             {
                 Symbol = Symbol.Empty,
                 Time = DateTime.Today,
                 DataType = MarketDataType.Base,
-                SomeCustomProperty = "This is some market related information"
+
+		Value = 10m
             };
         }
     }
