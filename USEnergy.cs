@@ -26,6 +26,11 @@ namespace QuantConnect.DataSource
     public partial class USEnergy : BaseData
     {
         /// <summary>
+        /// Data source ID
+        /// </summary>
+        public static int DataSourceId { get; } = 2005;
+
+        /// <summary>
         /// Determines the location of the data
         /// </summary>
         /// <param name="config">Subscription configuration</param>
