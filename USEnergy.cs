@@ -28,7 +28,7 @@ namespace QuantConnect.DataSource
         /// <summary>
         /// Data source ID
         /// </summary>
-        public static int DataSourceId { get; } = 2005;
+        public static int DataSourceId { get; } = 2031;
 
         /// <summary>
         /// Determines the location of the data
