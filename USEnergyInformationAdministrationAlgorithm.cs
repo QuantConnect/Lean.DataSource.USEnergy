@@ -13,13 +13,11 @@
  * limitations under the License.
 */
 
-using QuantConnect;
-using QuantConnect.Algorithm;
 using QuantConnect.Data;
-using QuantConnect.Data.Custom;
-using QuantConnect.Data.Custom.Tiingo;
+using QuantConnect.Algorithm;
 using QuantConnect.DataSource;
 using QuantConnect.Indicators;
+using QuantConnect.Data.Custom.Tiingo;
 
 namespace QuantConnect.DataLibrary.Tests
 {
@@ -51,11 +49,9 @@ namespace QuantConnect.DataLibrary.Tests
 
             // Set your Tiingo API Token here
             Tiingo.SetAuthCode("my-tiingo-api-token");
-            // Set your US Energy Information Administration (EIA) Token here
-            USEnergyAPI.SetAuthCode("my-us-energy-information-api-token");
 
             _tiingoSymbol = AddData<TiingoPrice>(tiingoTicker, Resolution.Daily).Symbol;
-            _energySymbol = AddData<USEnergyAPI>(energyTicker, Resolution.Hour).Symbol;
+            _energySymbol = AddData<USEnergy>(energyTicker, Resolution.Hour).Symbol;
 
             _emaFast = EMA(_tiingoSymbol, 5);
             _emaSlow = EMA(_tiingoSymbol, 10);
@@ -75,7 +71,7 @@ namespace QuantConnect.DataLibrary.Tests
             }
 
             // Extract US EIA data from the slice
-            var energyData = slice.Get<USEnergyAPI>();
+            var energyData = slice.Get<USEnergy>();
             foreach (var row in energyData.Values)
             {
                 Log($"{Time} - {row.Symbol.Value} - {row.Value} ");

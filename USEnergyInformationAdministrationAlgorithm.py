@@ -12,7 +12,6 @@
 # limitations under the License.
 
 from AlgorithmImports import *
-from QuantConnect.DataSource import *
 from QuantConnect.Data.Custom.Tiingo import *
 
 ### <summary>
@@ -32,14 +31,11 @@ class USEnergyInformationAdministrationAlgorithm(QCAlgorithm):
 
         # Set your Tiingo API Token here
         Tiingo.SetAuthCode("my-tiingo-api-token")
-        # Set your US Energy Information Administration (EIA) API Token here
-        USEnergyAPI.SetAuthCode("my-us-energy-information-api-token")
-
 
         self.tiingoTicker = "AAPL"
         self.energyTicker = "NUC_STATUS.OUT.US.D"
-        self.tiingoSymbol = self.AddData(TiingoDailyData, self.tiingoTicker, Resolution.Daily).Symbol
-        self.energySymbol = self.AddData(USEnergyAPI, self.energyTicker, Resolution.Hour).Symbol
+        self.tiingoSymbol = self.AddData(TiingoPrice, self.tiingoTicker, Resolution.Daily).Symbol
+        self.energySymbol = self.AddData(USEnergy, self.energyTicker, Resolution.Hour).Symbol
 
 
         self.emaFast = self.EMA(self.tiingoSymbol, 5)
