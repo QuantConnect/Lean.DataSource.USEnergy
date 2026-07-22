@@ -35,7 +35,7 @@ namespace QuantConnect.DataSource
             /// <summary>Avista Corporation</summary>
             public const string AvistaCorporation = "AVA";
             /// <summary>Avangrid Renewables, LLC</summary>
-            public const string AvangridRenewablesLLC = "AVRN";
+            public const string AvangridRenewablesLlc = "AVRN";
             /// <summary>Arizona Public Service Company</summary>
             public const string ArizonaPublicServiceCompany = "AZPS";
             /// <summary>Balancing Authority of Northern California</summary>
@@ -61,9 +61,9 @@ namespace QuantConnect.DataSource
             /// <summary>Duke Energy Progress West</summary>
             public const string DukeEnergyProgressWest = "CPLW";
             /// <summary>Arlington Valley, LLC</summary>
-            public const string ArlingtonValleyLLC = "DEAA";
+            public const string ArlingtonValleyLlc = "DEAA";
             /// <summary>PUD No. 1 of Douglas County</summary>
-            public const string PUDNo1OfDouglasCounty = "DOPD";
+            public const string PudNo1OfDouglasCounty = "DOPD";
             /// <summary>Duke Energy Carolinas</summary>
             public const string DukeEnergyCarolinas = "DUK";
             /// <summary>Electric Energy, Inc.</summary>
@@ -87,15 +87,15 @@ namespace QuantConnect.DataSource
             /// <summary>GridLiance</summary>
             public const string GridLiance = "GLHB";
             /// <summary>Gridforce Energy Management, LLC</summary>
-            public const string GridforceEnergyManagementLLC = "GRID";
+            public const string GridforceEnergyManagementLlc = "GRID";
             /// <summary>Griffith Energy, LLC</summary>
-            public const string GriffithEnergyLLC = "GRIF";
+            public const string GriffithEnergyLlc = "GRIF";
             /// <summary>Gainesville Regional Utilities</summary>
             public const string GainesvilleRegionalUtilities = "GVL";
             /// <summary>NaturEner Power Watch, LLC</summary>
-            public const string NaturEnerPowerWatchLLC = "GWA";
+            public const string NaturEnerPowerWatchLlc = "GWA";
             /// <summary>New Harquahala Generating Company, LLC</summary>
-            public const string NewHarquahalaGeneratingCompanyLLC = "HGMA";
+            public const string NewHarquahalaGeneratingCompanyLlc = "HGMA";
             /// <summary>City of Homestead</summary>
             public const string CityOfHomestead = "HST";
             /// <summary>Imperial Irrigation District</summary>
@@ -105,13 +105,13 @@ namespace QuantConnect.DataSource
             /// <summary>ISO New England</summary>
             public const string ISONE = "ISNE";
             /// <summary>ISO New England</summary>
-            public const string ISONewEngland = "ISNE";
+            public const string IsoNewEngland = "ISNE";
             /// <summary>JEA</summary>
-            public const string JEA = "JEA";
+            public const string Jea = "JEA";
             /// <summary>Los Angeles Department of Water and Power</summary>
             public const string LosAngelesDepartmentOfWaterAndPower = "LDWP";
             /// <summary>LG&amp;E and KU Services Company as agent for Louisville Gas and Electric Company and Kentucky Utilities Company</summary>
-            public const string LGEAndKUServicesCompanyAsAgentForLouisvilleGasAndElectricCompanyAndKentuckyUtilitiesCompany = "LGEE";
+            public const string LgEAndKuServicesCompanyAsAgentForLouisvilleGasAndElectricCompanyAndKentuckyUtilitiesCompany = "LGEE";
             /// <summary>Mid-Atlantic</summary>
             public const string MidAtlantic = "MIDA";
             /// <summary>Midwest</summary>
@@ -145,7 +145,7 @@ namespace QuantConnect.DataSource
             /// <summary>PJM Interconnection, LLC</summary>
             public const string PJM = "PJM";
             /// <summary>PJM Interconnection, LLC</summary>
-            public const string PJMInterconnectionLLC = "PJM";
+            public const string PjmInterconnectionLlc = "PJM";
             /// <summary>Public Service Company of New Mexico</summary>
             public const string PublicServiceCompanyOfNewMexico = "PNM";
             /// <summary>Public Service Company of Colorado</summary>
@@ -203,7 +203,7 @@ namespace QuantConnect.DataSource
             /// <summary>Western Area Power Administration - Upper Great Plains West</summary>
             public const string WesternAreaPowerAdministrationUpperGreatPlainsWest = "WAUW";
             /// <summary>NaturEner Wind Watch, LLC</summary>
-            public const string NaturEnerWindWatchLLC = "WWA";
+            public const string NaturEnerWindWatchLlc = "WWA";
             /// <summary>Alcoa Power Generating, Inc. - Yadkin Division</summary>
             public const string AlcoaPowerGeneratingIncYadkinDivision = "YAD";
         }
