@@ -1,62 +1,70 @@
-### Introduction
+## Introduction
 
-The EIA Electricity dataset reports how the U.S. power grid actually ran, day by day. Every day each balancing authority tells the Energy Information Administration how much electricity its region consumed, how much it had forecast a day earlier, how much it generated, how much it moved across its borders, and which fuels produced that generation. Coverage starts in 2019 and spans 81 balancing authorities, from the large market operators (PJM, ERCOT, CAISO, MISO, NYISO, ISO New England, SPP) down to individual utilities and the regional aggregates.
+The US Electricity dataset by the Energy Information Administration (EIA) tracks daily demand and generation on the US power grid, with generation broken down by fuel type. The data covers 81 balancing authorities, starts in January 2019, and is delivered on a daily frequency. This dataset is created by processing the Form EIA-930 data that balancing authorities report to the EIA. Some balancing authorities do not report the fuel mix.
 
-Electricity is where several macro stories become measurable before they show up in prices. A heat wave lands as a demand spike against a stale forecast. A cold snap shows up as gas burn. The energy transition shows up as coal losing share to wind and solar, day by day, region by region.
+## About the Provider
 
-### About the Provider
+The U.S. Energy Information Administration (EIA) is the statistical agency of the US Department of Energy, created by Congress in 1977. It collects and publishes energy data that is independent of policy. Policymakers, markets, and the public use its data to understand energy in the United States.
 
-The U.S. Energy Information Administration (EIA) is the statistical agency of the Department of Energy and the official source for U.S. energy statistics. Form EIA-930 collects operating data directly from the balancing authorities that run the grid and publishes it through the Hourly Electric Grid Monitor. The data is a public record and is released free of charge through the EIA API.
+## Getting Started
 
-QuantConnect processes and caches the EIA-930 data so it is delivered to your algorithm as it was published, with no look-ahead.
-
-### Getting Started
+The following snippet demonstrates how to request data from the US Electricity dataset:
 
 ```python
-self._pjm = self.add_data(EIAElectricity, EIA.BalancingAuthorities.PJM, Resolution.DAILY).symbol
-```
-```csharp
-_pjm = AddData<EIAElectricity>(EIA.BalancingAuthorities.PJM, Resolution.Daily).Symbol;
+self.dataset_symbol = self.add_data(EIAElectricity, EIA.BalancingAuthorities.PJM, Resolution.DAILY).symbol
 ```
 
-### Data Summary
+```csharp
+_datasetSymbol = AddData<EIAElectricity>(EIA.BalancingAuthorities.PJM, Resolution.Daily).Symbol;
+```
+
+## Data Summary
+
+The following table describes the dataset properties:
 
 | Property | Value |
 | --- | --- |
 | Start Date | January 2019 |
 | Asset Coverage | 81 US Balancing Authorities |
-| Data Density | Sparse |
+| Data Density | Regular |
 | Resolution | Daily |
 | Timezone | New York |
-| Data Points | 210,512 |
 
-A single `EIAElectricity` class carries everything one balancing authority reports for one day:
+## Example Applications
 
-| Group | Fields |
+The US Electricity dataset enables you to trade on the daily state of the US power grid. Examples include the following strategies:
+
+- Trading utility stocks when actual demand runs above the day-ahead forecast
+- Trading natural gas based on how much power comes from gas plants
+- Trading coal and gas producers as their share of generation shifts
+
+For more example algorithms, see [Examples](/datasets/eia-us-electricity/examples).
+
+## Supported Balancing Authorities
+
+The following table shows the accessor code you need to add each major balancing authority to your algorithm:
+
+| Constant | Balancing Authority |
 | --- | --- |
-| Grid operations | Demand, day-ahead demand forecast, net generation, total interchange |
-| Fuel mix | Coal, natural gas, nuclear, hydro, wind, solar, geothermal, oil, other, unknown |
-| Storage | Pumped storage, battery, other storage, unknown storage |
-| Hybrid renewables | Solar with storage, wind with storage |
+| EIA.BalancingAuthorities.PJM | PJM Interconnection, the largest balancing authority in the country |
+| EIA.BalancingAuthorities.ERCOT | Electric Reliability Council of Texas |
+| EIA.BalancingAuthorities.CAISO | California Independent System Operator |
+| EIA.BalancingAuthorities.MISO | Midcontinent Independent System Operator |
+| EIA.BalancingAuthorities.NYISO | New York Independent System Operator |
+| EIA.BalancingAuthorities.ISONE | ISO New England |
+| EIA.BalancingAuthorities.SPP | Southwest Power Pool |
+| EIA.BalancingAuthorities.BPA | Bonneville Power Administration |
 
-Every value is in megawatthours. The three headline metrics balance: net generation minus net interchange equals demand.
+## Meta
 
-Fields are nullable. A blank means the balancing authority does not report that series at all, which is a different statement from a zero. Small authorities report demand but no fuel split, and the storage and hybrid categories only exist in recent years, so a zero is a real reading (no wind generated that day) while a null is an absence.
-
-### Example Applications
-
-The EIA Electricity dataset enables trading strategies driven by grid fundamentals. Examples include:
-
-- Trading utility equities on load surprise, where actual demand runs above the day-ahead forecast.
-- Trading natural gas on power-sector gas burn, using gas generation as a share of the fuel mix.
-- Trading coal and gas producers on fuel substitution as their share of generation shifts.
-- Trading renewable exposure on wind and solar penetration by region.
-- Trading regional stress using net interchange, which shows which grids are importing to cover load.
-
-### Data Point Attributes
-
-The EIA Electricity dataset provides `EIAElectricity` objects.
-
-### Revisions
-
-EIA-930 values are preliminary when first published and are revised over the following days as balancing authorities finalize their numbers. QuantConnect ingests them as published, so a backtest sees what a live algorithm would have seen that day. The revision behavior is a property of the source.
+| Field | Value |
+| --- | --- |
+| name | US Electricity |
+| url | eia-us-electricity |
+| vendorName | Energy Information Administration |
+| website | https://www.eia.gov/ |
+| history | January 2019 |
+| reach | 81 Balancing Authorities |
+| shortDescription | Demand and generation information for the US power grid. |
+| priceCTA | Free in Cloud |
+| delivery | cloud & download |
