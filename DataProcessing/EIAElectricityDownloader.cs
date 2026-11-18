@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -288,16 +289,25 @@ namespace QuantConnect.DataProcessing
             for (var attempt = 1; ; attempt++)
             {
                 _rateGate.WaitToProceed();
+                var stopwatch = Stopwatch.StartNew();
                 try
                 {
                     return _httpClient.GetStringAsync(url).GetAwaiter().GetResult();
                 }
                 catch (Exception err) when (attempt < MaxAttempts && IsTransient(err))
                 {
+                    // The type alone can't tell a 504 from a refused connection or a timeout: log the
+                    // messages, and how long the attempt took, so a slow run shows where its time went.
+                    var reason = $"{err.GetType().Name}: {err.Message}";
+                    if (err.InnerException != null)
+                    {
+                        reason += $" {err.InnerException.GetType().Name}: {err.InnerException.Message}";
+                    }
+
                     // Back off exponentially: 4s, 16s, 64s, 256s.
                     var delay = TimeSpan.FromSeconds(Math.Pow(4, attempt));
-                    Log.Trace($"EIAElectricityDownloader.GetWithRetry(): attempt {attempt} failed " +
-                              $"({err.GetType().Name}), retrying in {delay.TotalSeconds:F0}s");
+                    Log.Trace($"EIAElectricityDownloader.GetWithRetry(): attempt {attempt} failed after " +
+                              $"{stopwatch.Elapsed.TotalSeconds:F0}s ({reason}), retrying in {delay.TotalSeconds:F0}s");
                     Thread.Sleep(delay);
                 }
             }
