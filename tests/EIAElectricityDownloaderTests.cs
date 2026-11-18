@@ -38,6 +38,7 @@ namespace QuantConnect.DataLibrary.Tests
     {
         private const string ApiKey = "SYNTHETICKEY123";
         private const string Url = "https://api.eia.gov/v2/electricity/rto/daily-region-data/data/?api_key=" + ApiKey;
+        private const string CanceledMessage = "Stub request canceled by the client's timeout";
         private const string Body = "{\"response\":{\"data\":[]}}";
 
         private ILogHandler _previousLogHandler;
@@ -72,13 +73,15 @@ namespace QuantConnect.DataLibrary.Tests
         [Test]
         public void LogsInnerExceptionOfRefusedConnection()
         {
+            var refused = new SocketException((int)SocketError.ConnectionRefused);
+            Assert.IsNotEmpty(refused.Message);
             var line = FailOnceThenSucceed(TimeSpan.FromSeconds(120),
                 (_, _) => throw new HttpRequestException(HttpRequestError.ConnectionError,
-                    "Connection refused (api.eia.gov:443)", new SocketException((int)SocketError.ConnectionRefused)));
+                    "Connection refused (api.eia.gov:443)", refused));
 
             StringAssert.Contains("attempt 1 failed after 0s", line);
             StringAssert.Contains("HttpRequestException: Connection refused (api.eia.gov:443)", line);
-            StringAssert.Contains("SocketException: ", line);
+            StringAssert.Contains($"SocketException: {refused.Message}", line);
             StringAssert.Contains("retrying in 4s", line);
         }
 
@@ -88,12 +91,21 @@ namespace QuantConnect.DataLibrary.Tests
             var line = FailOnceThenSucceed(TimeSpan.FromSeconds(2),
                 async (_, cancellationToken) =>
                 {
-                    await Task.Delay(Timeout.Infinite, cancellationToken);
+                    try
+                    {
+                        await Task.Delay(Timeout.Infinite, cancellationToken);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // HttpClient keeps this message as its inner TimeoutException's message
+                        throw new OperationCanceledException(CanceledMessage, cancellationToken);
+                    }
                     return null;
                 });
 
             StringAssert.Contains("TaskCanceledException: ", line);
-            StringAssert.Contains("TimeoutException: ", line);
+            StringAssert.Contains("HttpClient.Timeout of 2 seconds", line);
+            StringAssert.Contains($"TimeoutException: {CanceledMessage}", line);
             var seconds = int.Parse(Regex.Match(line, @"attempt 1 failed after (\d+)s").Groups[1].Value);
             Assert.GreaterOrEqual(seconds, 2);
             StringAssert.Contains("retrying in 4s", line);
