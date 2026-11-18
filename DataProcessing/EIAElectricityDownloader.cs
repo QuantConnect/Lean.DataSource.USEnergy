@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -94,15 +95,26 @@ namespace QuantConnect.DataProcessing
         /// previously processed data found in <paramref name="processedDataDirectory"/>.
         /// </summary>
         public EIAElectricityDownloader(string destinationDirectory, string processedDataDirectory)
+            : this(destinationDirectory, processedDataDirectory, Config.Get("eia-api-key"),
+                new HttpClient { Timeout = TimeSpan.FromSeconds(120) })
         {
-            _destinationDirectory = destinationDirectory;
-            _processedDataDirectory = processedDataDirectory;
-            _apiKey = Config.Get("eia-api-key");
-            if (string.IsNullOrEmpty(_apiKey))
+        }
+
+        /// <summary>
+        /// Creates a new instance with the given API key and HTTP client, so tests can stub the API.
+        /// </summary>
+        internal EIAElectricityDownloader(string destinationDirectory, string processedDataDirectory, string apiKey,
+            HttpClient httpClient)
+        {
+            if (string.IsNullOrEmpty(apiKey))
             {
+                httpClient.DisposeSafely();
                 throw new ArgumentException("eia-api-key is not set in config.json");
             }
-            _httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
+            _destinationDirectory = destinationDirectory;
+            _processedDataDirectory = processedDataDirectory;
+            _apiKey = apiKey;
+            _httpClient = httpClient;
         }
 
         /// <summary>Runs the download/convert. Returns true on success.</summary>
@@ -283,21 +295,30 @@ namespace QuantConnect.DataProcessing
         /// Issues one request, retrying on the transient failures the API throws under load. EIA answers
         /// a wide query with a 503 often enough that a backfill without this never finishes.
         /// </summary>
-        private string GetWithRetry(string url)
+        internal string GetWithRetry(string url)
         {
             for (var attempt = 1; ; attempt++)
             {
                 _rateGate.WaitToProceed();
+                var stopwatch = Stopwatch.StartNew();
                 try
                 {
                     return _httpClient.GetStringAsync(url).GetAwaiter().GetResult();
                 }
                 catch (Exception err) when (attempt < MaxAttempts && IsTransient(err))
                 {
+                    // The type alone can't tell a 504 from a refused connection or a timeout: log the
+                    // messages, and how long the attempt took, so a slow run shows where its time went.
+                    var reason = $"{err.GetType().Name}: {err.Message}";
+                    if (err.InnerException != null)
+                    {
+                        reason += $" {err.InnerException.GetType().Name}: {err.InnerException.Message}";
+                    }
+
                     // Back off exponentially: 4s, 16s, 64s, 256s.
                     var delay = TimeSpan.FromSeconds(Math.Pow(4, attempt));
-                    Log.Trace($"EIAElectricityDownloader.GetWithRetry(): attempt {attempt} failed " +
-                              $"({err.GetType().Name}), retrying in {delay.TotalSeconds:F0}s");
+                    Log.Trace($"EIAElectricityDownloader.GetWithRetry(): attempt {attempt} failed after " +
+                              $"{stopwatch.Elapsed.TotalSeconds:F0}s ({reason}), retrying in {delay.TotalSeconds:F0}s");
                     Thread.Sleep(delay);
                 }
             }

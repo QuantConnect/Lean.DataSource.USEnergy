@@ -13,6 +13,9 @@
         <PackageReference Include="fasterflect" Version="3.0.0" />
     </ItemGroup>
     <ItemGroup>
+        <InternalsVisibleTo Include="Tests" />
+    </ItemGroup>
+    <ItemGroup>
         <ProjectReference Include="..\QuantConnect.DataSource.csproj" />
     </ItemGroup>
     <ItemGroup>
